@@ -254,6 +254,38 @@
       .form-grid{ grid-template-columns: 1fr; }
       .card{ padding:16px; }
     }
+
+
+    /* ====== Logos strip ====== */
+.logos-container{
+  margin: 0 0 18px;
+}
+
+.logos-wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 10px 0;
+}
+
+.partner-logo{
+  max-height: 100px;
+  max-width: 150px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(15,23,42,.06));
+}
+
+
+@media (max-width: 640px){
+  .logos-wrapper{
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -269,6 +301,13 @@
 
   <main>
     <div class="shell">
+      <div class="logos-container">
+        <div class="logos-wrapper">
+          <img src="./union.png" alt="Union of Arab Chambers" class="partner-logo">
+          <img src="./logo.svg" alt="Arab CSR Index" class="partner-logo">
+          <img src="./hope.png" alt="Hope Mohamad Cheaib Foundation" class="partner-logo">
+        </div>
+      </div>
       <div id="app"></div>
     </div>
   </main>
