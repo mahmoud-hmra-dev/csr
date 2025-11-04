@@ -256,7 +256,6 @@
     }
 
 
-    /* ====== Logos strip ====== */
 .logos-container{
   margin: 0 0 18px;
 }
@@ -267,24 +266,30 @@
   justify-content: center;
   gap: 22px;
   padding: 10px 0;
+  flex-wrap: nowrap; 
+  overflow-x: auto;     
+  -webkit-overflow-scrolling: touch;
 }
 
 .partner-logo{
-  max-height: 100px;
+  max-height: clamp(50px, 20vw, 97px);
   max-width: 150px;
   width: auto;
   height: auto;
   object-fit: contain;
+  flex: 0 0 auto;       
   filter: drop-shadow(0 2px 8px rgba(15,23,42,.06));
 }
 
-
-@media (max-width: 640px){
-  .logos-wrapper{
-    flex-direction: column;
-    gap: 12px;
-  }
+.logos-wrapper::-webkit-scrollbar{ height: 6px; }
+.logos-wrapper::-webkit-scrollbar-thumb{
+  background: rgba(15,23,42,.15);
+  border-radius: 999px;
 }
+.logos-wrapper::-webkit-scrollbar-track{
+  background: transparent;
+}
+
 
   </style>
 </head>
