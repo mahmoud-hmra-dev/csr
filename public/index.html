@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSR Assessment Portal</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --bg-soft:#ffffff;
+      --border:#d0d7e6;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-soft:#e0ecff;
+      --primary-dark:#1e40af;
+      --danger:#dc2626;
+      --shadow-soft:0 18px 40px rgba(15,23,42,0.08);
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;margin:0;padding:0;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Arabic","Noto Sans",sans-serif;
+      background:radial-gradient(circle at top left,#dbeafe,#eef2ff 40%,#f9fafb 75%);
+      color:var(--text);
+    }
+    a{text-decoration:none;color:inherit;}
+    button{font-family:inherit;}
+    .top-nav{
+      position:sticky;top:0;z-index:50;
+      background:rgba(248,250,252,0.94);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(226,232,240,0.9);
+    }
+    .nav-inner{
+      max-width:1120px;margin:0 auto;
+      padding:10px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+    }
+    .brand-icon{
+      width:32px;height:32px;border-radius:12px;
+      background:linear-gradient(135deg,#2563eb,#38bdf8);
+      box-shadow:0 8px 20px rgba(37,99,235,0.45);
+    }
+    .brand-title{font-weight:700;font-size:18px;}
+    .nav-links{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .nav-link{
+      padding:6px 12px;border-radius:999px;font-size:14px;
+      color:var(--muted);cursor:pointer;border:1px solid transparent;
+    }
+    .nav-link.active{
+      color:var(--primary-dark);
+      background:var(--primary-soft);
+      border-color:rgba(129,140,248,0.4);
+    }
+    .nav-link.primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      box-shadow:0 10px 20px rgba(37,99,235,0.35);
+    }
+    .nav-link.primary:hover{filter:brightness(1.05);}
+    .nav-user{
+      font-size:13px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:white;
+      border:1px solid var(--border);
+      color:var(--muted);
+    }
+
+    main{
+      min-height:calc(100vh - 80px);
+    }
+    .shell{
+      max-width:1120px;margin:0 auto;padding:22px 18px 40px;
+    }
+    .grid-2{
+      display:grid;
+      grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
+      gap:22px;
+    }
+    .card{
+      background:var(--bg-soft);
+      border-radius:22px;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
+      padding:20px 20px;
+    }
+    .hero-title{
+      font-size:30px;
+      font-weight:750;
+      margin-bottom:10px;
+      color:var(--primary-dark);
+    }
+    .hero-sub{
+      font-size:15px;
+      color:var(--muted);
+      margin-bottom:16px;
+    }
+    .hero-cta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 10px;border-radius:999px;
+      background:#e0f2fe;
+      color:#0369a1;font-size:12px;
+    }
+    .tag span.icon{font-size:14px;}
+    .muted{color:var(--muted);font-size:13px;}
+    .stat-row{
+      display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;
+    }
+    .stat{
+      padding:10px 12px;border-radius:16px;background:#f8fafc;
+      border:1px dashed #cbd5f5;font-size:12px;
+    }
+    .stat strong{display:block;font-size:18px;margin-bottom:2px;color:var(--primary-dark);}
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:12px 16px;
+    }
+    /* Make section headers inside forms span full width */
+    .form-grid > .section-title{ grid-column: 1 / -1; margin-top:6px; }
+    .field{
+      display:flex;flex-direction:column;gap:4px;font-size:13px;
+    }
+    .field label{font-weight:500;}
+    .field span.helper{font-size:11px;color:var(--muted);}
+    .field input,.field select{
+      border-radius:12px;border:1px solid #d0d7e6;
+      padding:8px 10px;font-size:13px;
+      outline:none;background:#f9fbff;
+    }
+    .field input:focus,.field select:focus{
+      border-color:#2563eb;
+      box-shadow:0 0 0 1px rgba(37,99,235,0.25);
+      background:#fff;
+    }
+    .section-title{
+      font-size:19px;font-weight:650;margin-bottom:6px;color:var(--primary-dark);
+    }
+    .section-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+
+    .btn{
+      border-radius:999px;border:0;padding:9px 16px;font-size:14px;
+      cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;
+      box-shadow:0 10px 22px rgba(37,99,235,0.35);
+    }
+    .btn-outline{
+      background:#fff;border:1px solid var(--border);color:var(--text);
+    }
+    .btn-danger{
+      background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;
+    }
+    .btn[disabled]{opacity:.6;cursor:not-allowed;box-shadow:none;}
+    .tabs{
+      display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;
+    }
+    .tab{
+      padding:6px 12px;border-radius:999px;border:1px solid var(--border);
+      font-size:13px;cursor:pointer;background:#f9fafb;color:var(--muted);
+    }
+    .tab.active{
+      background:#2563eb;color:#fff;border-color:#2563eb;
+    }
+
+    .two-col{
+      display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;
+    }
+
+    .q-card{
+      margin-top:10px;
+      padding:14px 14px;border-radius:16px;
+      border:1px solid #e5e7eb;background:#f9fafb;
+    }
+    .q-title{font-size:15px;font-weight:600;margin-bottom:6px;}
+    .opt{
+      display:block;margin-top:7px;padding:8px 10px;border-radius:10px;
+      border:1px solid #e5e7eb;background:#fff;cursor:pointer;font-size:13px;
+    }
+    .opt:hover{border-color:#c4d0f5;background:#eff6ff;}
+    .opt input{margin-right:6px;}
+    .survey-controls{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 10px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;
+      font-size:12px;color:#1d4ed8;
+    }
+    .progress-bar{
+      width:100%;height:7px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:8px;
+    }
+    .progress-bar>div{
+      height:100%;width:0;background:linear-gradient(90deg,#2563eb,#38bdf8);
+      transition:width .25s ease;
+    }
+
+    .table{
+      width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;
+    }
+    .table th,.table td{
+      padding:6px 8px;border-bottom:1px solid #e5e7eb;text-align:left;
+    }
+    .table th{background:#f3f4ff;font-weight:600;font-size:12px;}
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:2px 8px;border-radius:999px;font-size:11px;
+    }
+    .badge.outline{
+      border:1px solid #c4b5fd;background:#ede9fe;color:#4c1d95;
+    }
+    .badge.dim{
+      border:1px solid #cbd5e1;background:#f8fafc;color:#475569;
+    }
+
+    .toast{
+      position:fixed;bottom:16px;right:16px;z-index:60;
+      background:#0f172a;color:#e5e7eb;padding:10px 14px;border-radius:12px;
+      font-size:13px;box-shadow:0 12px 30px rgba(15,23,42,0.5);
+      display:flex;align-items:center;gap:8px;
+    }
+    .toast span.icon{font-size:16px;}
+    .toast.error{background:#991b1b;}
+
+    footer{
+      border-top:1px solid rgba(226,232,240,0.9);
+      background:rgba(248,250,252,0.95);
+      padding:10px 18px;
+      font-size:12px;
+      color:#94a3b8;
+      text-align:center;
+    }
+
+    @media (max-width:900px){
+      .grid-2,.two-col{grid-template-columns:minmax(0,1fr);}    
+      .nav-inner{flex-wrap:wrap;}
+    }
+    @media (max-width:640px){
+      .form-grid{ grid-template-columns: 1fr; }
+      .card{ padding:16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-icon"></div>
+        <div class="brand-title">CSR Assessment Portal</div>
+      </div>
+      <div class="nav-links" id="nav-links"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="shell">
+      <div id="app"></div>
+    </div>
+  </main>
+
+  <footer>
+    © <span id="year"></span> CSR Assessment. All rights reserved.
+  </footer>
+
+  <script>
+    const state = {
+      route: "landing",
+      lang: "en",
+      token: null,
+      user: null,
+      sections: [],
+      survey: {
+        loaded: false,
+        sectionIndex: 0,
+        answers: {}
+      }
+    };
+
+
+// --- i18n ---
+(function initLang(){
+  const saved = localStorage.getItem("lang");
+  state.lang = saved === "ar" ? "ar" : "en";
+  document.documentElement.setAttribute("lang", state.lang);
+  document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
+})();
+
+function setLang(lang){
+  state.lang = (lang === "ar") ? "ar" : "en";
+  localStorage.setItem("lang", state.lang);
+  document.documentElement.setAttribute("lang", state.lang);
+  document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
+  render(document.getElementById("app"));
+  renderNav();
+}
+
+function t(key){
+  const ar = {
+    "Home":"الرئيسية",
+    "Dashboard":"لوحة التحكم",
+    "Survey":"الاستبيان",
+    "Admin":"المشرف",
+    "Login":"تسجيل الدخول",
+    "Register":"إنشاء حساب",
+    "Logout":"تسجيل الخروج",
+    "CSR questionnaire":"استبيان المسؤولية المجتمعية",
+    "Questions filtered":"الأسئلة يتم تصفيتها حسب نوع المؤسسة.",
+    "Section":"القسم",
+    "of":"من",
+    "You reached the end":"انتهيت من الاستبيان. يمكنك إرسال إجاباتك الآن.",
+    "Submit answers":"إرسال الإجابات",
+    "Next section":"القسم التالي",
+    "Previous section":"القسم السابق",
+    "Start survey":"ابدأ الاستبيان",
+    "Assess title":"قيّم نضج CSR وESG خلال دقائق.",
+    "Assess sub":"استبيان ثنائي اللغة لتقييم المنظمات غير الحكومية والشركات عبر الحوكمة والأثر والابتكار والمزيد."
+  };
+  if (state.lang === "ar"){
+    return ar[key] || key;
+  }
+  return key;
+}
+
+// --- i18n override (clean Arabic/English)
+// This replaces the previous broken translations with a comprehensive dictionary
+// and keeps the same helper name `t(key)` used across the app.
+const I18N = {
+  en: {
+    "Home":"Home",
+    "Dashboard":"Dashboard",
+    "Survey":"Survey",
+    "Admin":"Admin",
+    "Login":"Login",
+    "Register":"Create account",
+    "Logout":"Logout",
+    "CSR questionnaire":"CSR questionnaire",
+    "Questions filtered":"Questions are filtered automatically by your organization type.",
+    "Section":"Section",
+    "of":"of",
+    "You reached the end":"You reached the end.",
+    "Submit answers":"Submit answers",
+    "Next section":"Next section",
+    "Previous section":"Previous section",
+    "Start survey":"Start survey",
+    "Assess title":"Assess your CSR and ESG maturity.",
+    "Assess sub":"Get tailored questions based on your organization type and budget thresholds to evaluate practices and data.",
+    "Register your organization":"Register your organization",
+    "Register as NGO":"Register as NGO",
+    "Register as Corporate":"Register as Corporate",
+    "Create an account as an NGO or corporate. Budget will determine small vs large.":"Create an account as an NGO or corporate. Budget will determine small vs large.",
+    "Organization Info & Contact Details":"Organization Info & Contact Details",
+    "Arabic organization name":"Arabic organization name",
+    "English organization name":"English organization name",
+    "Company name":"Company name",
+    "Country":"Country",
+    "Acknowledgment/Registration number":"Acknowledgment/Registration number",
+    "Phone":"Phone",
+    "Company Website":"Company Website",
+    "NGO Causal Activities":"NGO Causal Activities",
+    "Sustainable Development Goal":"Sustainable Development Goal",
+    "Enter Area Of Assistance":"Enter Area Of Assistance",
+    "How Did You Know About Socality":"How Did You Know About Socality",
+    "Number Of Employment (including Volunteers)":"Number Of Employment (including Volunteers)",
+    "Annual budget / revenue (USD)":"Annual budget / revenue (USD)",
+    "Contact Details":"Contact Details",
+    "First name":"First name",
+    "Last name":"Last name",
+    "Your mobile":"Your mobile",
+    "Access Details":"Access Details",
+    "Your email":"Your email",
+    "Password":"Password",
+    "Confirm password":"Confirm password",
+    "I agree to the Terms of Service and Privacy Policy":"I agree to the Terms of Service and Privacy Policy",
+    "Cancel":"Cancel",
+    "Create account & continue":"Create account & continue",
+    "Company Contact & Details":"Company Contact & Details",
+    "Name Of Main Company Representative":"Name Of Main Company Representative",
+    "Phone Number Of Main Company Representative":"Phone Number Of Main Company Representative",
+    "Email Of Main Company Representative":"Email Of Main Company Representative",
+    "Social Responsibility Interests":"Social Responsibility Interests",
+    "Looking To Provide CSR By (Cause)":"Looking To Provide CSR By (Cause)",
+    "Have You Previously Supported Any Causes As Part Of CSR?":"Have You Previously Supported Any Causes As Part Of CSR?",
+    "Select":"Select",
+    "Yes":"Yes",
+    "No":"No",
+    "How it works":"How it works",
+    "Register or login CTA":"Register your organization (NGO or corporate) and provide basic profile details.",
+    "Small/Large rule":"Our rules classify you as small or large based on annual budget thresholds.",
+    "Complete tailored":"Complete the tailored CSR questionnaire, per section, in your preferred language.",
+    "Review submissions":"Review submissions in your dashboard; admins can configure thresholds and view all responses.",
+    "Go to survey":"Go to survey",
+    "Get started (register)":"Get started (register)",
+    "Open dashboard":"Open dashboard",
+    "Log in":"Log in",
+    "Access subtitle":"Access your CSR survey, profile and submissions.",
+    "Email and password are required.":"Email and password are required.",
+    "Logged in successfully.":"Logged in successfully.",
+    "Login failed.":"Login failed.",
+    "Please fill required fields.":"Please fill required fields.",
+    "Registration failed.":"Registration failed.",
+    "Account created. Let's start the survey.":"Account created. Let's start the survey.",
+    "Profile updated.":"Profile updated.",
+    "Could not update profile.":"Could not update profile.",
+    "Failed to load questions.":"Failed to load questions.",
+    "No sections available for your organization type yet.":"No sections available for your organization type yet.",
+    "Back":"Back",
+    "Open CSR survey":"Open CSR survey",
+    "Edit profile":"Edit profile",
+    "Profile":"Profile",
+    "Update your display name or password.":"Update your display name or password."
+  },
+  ar: {
+    "Home":"الرئيسية",
+    "Dashboard":"لوحة التحكم",
+    "Survey":"الاستبيان",
+    "Admin":"الإدارة",
+    "Login":"تسجيل الدخول",
+    "Register":"إنشاء حساب",
+    "Logout":"تسجيل الخروج",
+    "CSR questionnaire":"استبيان المسؤولية الاجتماعية للشركات",
+    "Questions filtered":"يتم تصفية الأسئلة تلقائيًا حسب نوع منظمتك.",
+    "Section":"القسم",
+    "of":"من",
+    "You reached the end":"وصلت إلى نهاية الاستبيان.",
+    "Submit answers":"إرسال الإجابات",
+    "Next section":"القسم التالي",
+    "Previous section":"القسم السابق",
+    "Start survey":"ابدأ الاستبيان",
+    "Assess title":"قيّم جاهزية المسؤولية الاجتماعية والحوكمة (ESG) لمنظمتك.",
+    "Assess sub":"احصل على أسئلة مخصصة بناءً على نوع المنظمة وحدود الميزانية لتقييم الممارسات والبيانات.",
+    "Register your organization":"سجّل منظمتك",
+    "Register as NGO":"التسجيل كمنظمة غير ربحية",
+    "Register as Corporate":"التسجيل كشركة",
+    "Create an account as an NGO or corporate. Budget will determine small vs large.":"أنشئ حسابًا كمنظمة غير ربحية أو شركة. سيُحدد الحجم (صغير/كبير) حسب الميزانية السنوية.",
+    "Organization Info & Contact Details":"معلومات المنظمة وبيانات التواصل",
+    "Arabic organization name":"اسم المنظمة بالعربية",
+    "English organization name":"اسم المنظمة بالإنجليزية",
+    "Company name":"اسم الشركة",
+    "Country":"الدولة",
+    "Acknowledgment/Registration number":"رقم التسجيل/الإقرار",
+    "Phone":"الهاتف",
+    "Company Website":"موقع المنظمة/الشركة",
+    "NGO Causal Activities":"أنشطة المنظمة",
+    "Sustainable Development Goal":"هدف التنمية المستدامة",
+    "Enter Area Of Assistance":"مجال المساعدة",
+    "How Did You Know About Socality":"كيف عرفت بنا",
+    "Number Of Employment (including Volunteers)":"عدد الموظفين (يشمل المتطوعين)",
+    "Annual budget / revenue (USD)":"الميزانية/الإيراد السنوي (دولار)",
+    "Contact Details":"بيانات التواصل",
+    "First name":"الاسم الأول",
+    "Last name":"اسم العائلة",
+    "Your mobile":"رقم الجوال",
+    "Access Details":"بيانات الدخول",
+    "Your email":"بريدك الإلكتروني",
+    "Password":"كلمة المرور",
+    "Confirm password":"تأكيد كلمة المرور",
+    "I agree to the Terms of Service and Privacy Policy":"أوافق على شروط الخدمة وسياسة الخصوصية",
+    "Cancel":"إلغاء",
+    "Create account & continue":"إنشاء الحساب والمتابعة",
+    "Company Contact & Details":"بيانات جهة الاتصال في الشركة",
+    "Name Of Main Company Representative":"اسم ممثل الشركة الرئيسي",
+    "Phone Number Of Main Company Representative":"هاتف ممثل الشركة الرئيسي",
+    "Email Of Main Company Representative":"بريد ممثل الشركة الرئيسي",
+    "Social Responsibility Interests":"اهتمامات المسؤولية الاجتماعية",
+    "Looking To Provide CSR By (Cause)":"ترغب في تقديم CSR من خلال (القضية)",
+    "Have You Previously Supported Any Causes As Part Of CSR?":"هل دعمت قضايا سابقًا ضمن CSR؟",
+    "Select":"اختر",
+    "Yes":"نعم",
+    "No":"لا",
+    "How it works":"كيف يعمل",
+    "Register or login CTA":"سجّل منظمتك (منظمة غير ربحية أو شركة) وقدّم بيانات أساسية.",
+    "Small/Large rule":"نصنّفك صغيرًا أو كبيرًا حسب حدود الميزانية السنوية.",
+    "Complete tailored":"أكمل الاستبيان المخصص قسمًا قسمًا باللغة التي تفضّلها.",
+    "Review submissions":"راجع الإرسالات من لوحة التحكم؛ يمكن للمسؤول ضبط الحدود ومراجعة جميع الردود.",
+    "Go to survey":"اذهب إلى الاستبيان",
+    "Get started (register)":"ابدأ (تسجيل)",
+    "Open dashboard":"افتح اللوحة",
+    "Log in":"تسجيل الدخول",
+    "Access subtitle":"ادخل إلى الاستبيان والملف والإرسالات.",
+    "Email and password are required.":"البريد الإلكتروني وكلمة المرور مطلوبان.",
+    "Logged in successfully.":"تم تسجيل الدخول بنجاح.",
+    "Login failed.":"فشل تسجيل الدخول.",
+    "Please fill required fields.":"يرجى تعبئة الحقول المطلوبة.",
+    "Registration failed.":"فشل التسجيل.",
+    "Account created. Let's start the survey.":"تم إنشاء الحساب. لنبدأ الاستبيان.",
+    "Profile updated.":"تم تحديث الملف الشخصي.",
+    "Could not update profile.":"تعذّر تحديث الملف الشخصي.",
+    "Failed to load questions.":"تعذّر تحميل الأسئلة.",
+    "No sections available for your organization type yet.":"لا توجد أقسام متاحة لنوع منظمتك حاليًا.",
+    "Back":"رجوع",
+    "Open CSR survey":"افتح الاستبيان",
+    "Edit profile":"تعديل الملف",
+    "Profile":"الملف الشخصي",
+    "Update your display name or password.":"حدّث اسم العرض أو كلمة المرور."
+  }
+};
+
+// Override translator with the new dictionary
+t = function(key){
+  const lang = state.lang || 'en';
+  return (I18N[lang] && I18N[lang][key]) || key;
+};
+    function setAuth(token, user){
+      state.token = token;
+      state.user = user;
+      if (token){
+        localStorage.setItem("csr_token", token);
+        localStorage.setItem("csr_user", JSON.stringify(user));
+      } else {
+        localStorage.removeItem("csr_token");
+        localStorage.removeItem("csr_user");
+      }
+      renderNav();
+    }
+
+    function restoreAuth(){
+      const t = localStorage.getItem("csr_token");
+      const u = localStorage.getItem("csr_user");
+      if (t && u){
+        try{
+          state.token = t;
+          state.user = JSON.parse(u);
+        }catch(e){
+          state.token = null;
+          state.user = null;
+        }
+      }
+    }
+
+    async function apiFetch(path, options={}){
+      const opts = { ...options };
+      opts.headers = opts.headers || {};
+      if (!opts.headers["Content-Type"] && opts.method && opts.method !== "GET"){
+        opts.headers["Content-Type"] = "application/json";
+      }
+      if (state.token){
+        opts.headers["Authorization"] = "Bearer " + state.token;
+      }
+      const res = await fetch(path, opts);
+      let data = {};
+      try{ data = await res.json(); }catch(e){}
+      if (!res.ok || data.ok === false){
+        throw data;
+      }
+      return data;
+    }
+
+    function showToast(msg, isError=false){
+      const old = document.getElementById("toast");
+      if (old) old.remove();
+      const div = document.createElement("div");
+      div.id = "toast";
+      div.className = "toast" + (isError ? " error" : "");
+      const icon = document.createElement("span");
+      icon.className = "icon";
+      icon.textContent = isError ? "⚠" : "✓";
+      const text = document.createElement("span");
+      text.textContent = msg;
+      div.appendChild(icon);
+      div.appendChild(text);
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 4000);
+    }
+
+    function go(route){
+      state.route = route;
+      window.location.hash = route === "landing" ? "" : ("/" + route);
+      render();
+    }
+
+    function syncRouteFromHash(){
+      const raw = window.location.hash.replace(/^#/, "");
+      const val = raw.replace(/^\//, "");
+      const allowed = ["landing","register","login","survey","dashboard","admin"];
+      state.route = allowed.includes(val) ? val : "landing";
+      render();
+    }
+
+    function renderNav(){
+      const nav = document.getElementById("nav-links");
+      nav.innerHTML = "";
+      const links = [];
+
+      links.push({ id:"landing", label:t("Home") });
+
+      if (state.user){
+        links.push({ id:"dashboard", label:t("Dashboard") });
+        links.push({ id:"survey", label:t("Survey") });
+        if (state.user.role === "admin"){
+          links.push({ id:"admin", label:t("Admin") });
+        }
+      }
+
+      if (!state.user){
+        links.push({ id:"login", label:t("Login") });
+        links.push({ id:"register", label:t("Register"), primary:true });
+      } else {
+        links.push({ id:"logout", label:t("Logout") });
+      }
+
+      if (state.user){
+        const badge = document.createElement("div");
+        badge.className = "nav-user";
+        const kind = state.user.org_kind || "-";
+        const size = state.user.org_size || "-";
+        badge.textContent = state.user.email + " · " + kind + " / " + size;
+        nav.appendChild(badge);
+      }
+
+      // Language selector
+      const langWrap = document.createElement("div");
+      const sel = document.createElement("select");
+      sel.style.padding = "6px 10px";
+      sel.style.border = "1px solid #cbd5e1";
+      sel.style.borderRadius = "999px";
+      sel.innerHTML = '<option value="en">English</option><option value="ar">العربية</option>';
+      sel.value = state.lang;
+      sel.addEventListener("change", (e)=>setLang(e.target.value));
+      langWrap.appendChild(sel);
+      nav.appendChild(langWrap);
+      links.forEach(l => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "nav-link" + (l.primary ? " primary" : "");
+        if (l.id === state.route){
+          btn.className += " active";
+        }
+        btn.textContent = l.label;
+        btn.addEventListener("click", () => {
+          if (l.id === "logout"){
+            setAuth(null, null);
+            state.survey = { loaded:false, sectionIndex:0, answers:{} };
+            go("landing");
+          } else {
+            go(l.id);
+          }
+        });
+        nav.appendChild(btn);
+      });
+    }
+
+    async function ensureQuestionsLoaded(){
+      if (state.survey.loaded) return;
+      const data = await apiFetch("/api/questions");
+      state.sections = data.sections || [];
+      state.survey.loaded = true;
+    }
+
+    function userSections(){
+      if (!state.user) return [];
+      const orgType = state.user.org_type;
+      const sections = (state.sections || []).map(sec => {
+        const qs = (sec.questions || []).filter(q => {
+          if (!q.organization_type || q.organization_type === "all") return true;
+          return q.organization_type === orgType;
+        });
+        return { ...sec, questions: qs };
+      }).filter(sec => sec.questions.length > 0);
+      return sections;
+    }
+
+    function renderLanding(root){
+      root.innerHTML = "";
+      const grid = document.createElement("div");
+      grid.className = "grid-2 card";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+      `;
+      const cta = document.createElement("div");
+      cta.className = "hero-cta";
+      const btnStart = document.createElement("button");
+      btnStart.className = "btn btn-primary";
+      btnStart.textContent = state.user ? t("Go to survey") : t("Get started (register)");
+      btnStart.addEventListener("click", () => {
+        if (!state.user) go("register"); else go("survey");
+      });
+      const btnLogin = document.createElement("button");
+      btnLogin.className = "btn btn-outline";
+      btnLogin.textContent = state.user ? "Open dashboard" : "I already have an account";
+      btnLogin.addEventListener("click", () => {
+        go(state.user ? "dashboard" : "login");
+      });
+      cta.appendChild(btnStart);
+      cta.appendChild(btnLogin);
+      left.appendChild(cta);
+
+      const stats = document.createElement("div");
+      stats.className = "stat-row";
+      stats.innerHTML = `
+      `;
+      left.appendChild(stats);
+
+      const right = document.createElement("div");
+      right.innerHTML = `
+        <div class="section-title">${t("How it works")}</div>
+        <ol class="muted" style="padding-left:18px;font-size:13px;">
+          <li>${t("Register or login CTA")}</li>
+          <li>${t("Small/Large rule")}</li>
+          <li>${t("Complete tailored")}</li>
+          <li>${t("Review submissions")}</li>
+        </ol>
+        <div class="progress-bar" style="margin-top:18px;"><div style="width:65%;"></div></div>
+        <p class="muted" style="margin-top:6px;">You can pause and resume at any time once logged in.</p>
+      `;
+
+      grid.appendChild(left);
+      grid.appendChild(right);
+      root.appendChild(grid);
+    }
+
+    function renderLogin(root){
+      if (state.user){
+        go("dashboard");
+        return;
+      }
+      root.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "card two-col";
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div class="section-title">${t("Log in")}</div>
+        <div class="section-sub">${t("Access subtitle")}</div>
+        <form id="login-form" class="form-grid">
+          <div class="field">
+          <label>${t("Email")}</label>
+            <input name="email" type="email" required />
+          </div>
+          <div class="field">
+          <label>${t("Password")}</label>
+            <input name="password" type="password" required />
+          </div>
+        </form>
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <button class="btn btn-primary" id="login-submit">${t("Login")}</button>
+          <button class="btn btn-outline" id="login-to-register">${t("Create account & continue")}</button>
+        </div>
+      `;
+      card.appendChild(left);
+
+      const right = document.createElement("div");
+      right.innerHTML = `
+        <div class="section-title">${t("Why log in?")}</div>
+        <p class="muted">${t("Logging in lets you resume partially completed surveys, keep your organization profile up to date, and view your submission history as analytics expand.")}</p>
+      `;
+      card.appendChild(right);
+      root.appendChild(card);
+
+      document.getElementById("login-submit").addEventListener("click", async () => {
+        const form = document.getElementById("login-form");
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        if (!email || !password){
+          showToast("Email and password are required.", true);
+          return;
+        }
+        try{
+          const data = await apiFetch("/api/login", {
+            method:"POST",
+            body: JSON.stringify({ email, password })
+          });
+          setAuth(data.token, data.user);
+          showToast("Logged in successfully.");
+          go("dashboard");
+        }catch(err){
+          showToast(err.error || "Login failed.", true);
+        }
+      });
+
+      document.getElementById("login-to-register").addEventListener("click", () => go("register"));
+    }
+
+    function renderRegister(root){
+      if (state.user){
+        go("dashboard");
+        return;
+      }
+      root.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div class="section-title">${t("Register your organization")}</div>
+        <div class="section-sub">${t("Create an account as an NGO or corporate. Budget will determine small vs large.")}</div>
+      `;
+      const tabs = document.createElement("div");
+      tabs.className = "tabs";
+      const tabNgo = document.createElement("button");
+      tabNgo.type = "button";
+      tabNgo.className = "tab active";
+      tabNgo.textContent = t("Register as NGO");
+      const tabCorp = document.createElement("button");
+      tabCorp.type = "button";
+      tabCorp.className = "tab";
+      tabCorp.textContent = t("Register as Corporate");
+      tabs.appendChild(tabNgo);
+      tabs.appendChild(tabCorp);
+      card.appendChild(tabs);
+
+      const formWrap = document.createElement("div");
+      formWrap.id = "register-form-wrap";
+      card.appendChild(formWrap);
+
+      root.appendChild(card);
+
+      let currentKind = "ngo";
+
+      function renderForm(){
+        formWrap.innerHTML = "";
+
+        const form = document.createElement("form");
+        form.id = "register-form";
+        form.className = "form-grid";
+
+        // Organization info block
+        const fieldsHtmlNgo = `
+          <div class="section-title">${t("Organization Info & Contact Details")}</div>
+          <div class="field"><label>${t("Arabic organization name")}</label><input name="name_ar" /></div>
+          <div class="field"><label>${t("English organization name")}</label><input name="name_en" required /></div>
+          <div class="field"><label>${t("Country")}</label><input name="country" placeholder="Lebanon" /></div>
+          <div class="field"><label>${t("Acknowledgment/Registration number")}</label><input name="registration_number" /></div>
+          <div class="field"><label>${t("Phone")}</label><input name="phone" /></div>
+          <div class="field"><label>${t("Company Website")}</label><input name="website" placeholder="https://www.example.com" /></div>
+          <div class="field"><label>${t("NGO Causal Activities")}</label><input name="ngo_causal_activities" placeholder="e.g., Humanitarian Aid" /></div>
+          <div class="field"><label>${t("Sustainable Development Goal")}</label><input name="sdg" placeholder="e.g., No Poverty" /></div>
+          <div class="field"><label>${t("Enter Area Of Assistance")}</label><input name="area_of_assistance" /></div>
+          <div class="field"><label>${t("How Did You Know About Socality")}</label><input name="heard_about" /></div>
+          <div class="field"><label>${t("Number Of Employment (including Volunteers)")}</label><input name="employees" type="number" min="0" /></div>
+          <div class="field"><label>${t("Annual budget / revenue (USD)")}</label><input name="budget" type="number" min="0" required /></div>
+
+          <div class="section-title">${t("Contact Details")}</div>
+          <div class="field"><label>${t("First name")}</label><input name="contact_first_name" /></div>
+          <div class="field"><label>${t("Last name")}</label><input name="contact_last_name" /></div>
+          <div class="field"><label>${t("Your mobile")}</label><input name="contact_mobile" /></div>
+
+          <div class="section-title">${t("Access Details")}</div>
+          <div class="field"><label>${t("Your email")}</label><input name="email" type="email" required /></div>
+          <div class="field"><label>${t("Password")}</label><input name="password" type="password" required /></div>
+          <div class="field"><label>${t("Confirm password")}</label><input name="password2" type="password" required /></div>
+          <div class="field" style="grid-column:1/-1;"><label><input type="checkbox" name="terms" /> ${t("I agree to the Terms of Service and Privacy Policy")}</label></div>
+        `;
+
+        const fieldsHtmlCorp = `
+          <div class="section-title">${t("Corporate Information")}</div>
+          <div class="field"><label>${t("Company name")}</label><input name="name_en" required /></div>
+          <div class="field"><label>${t("Arabic organization name")}</label><input name="name_ar" /></div>
+          <div class="field"><label>${t("Sector of Business")}</label><input name="sector" placeholder="e.g., Agriculture" /></div>
+          <div class="field"><label>${t("Country")}</label><input name="country" placeholder="Lebanon" /></div>
+          <div class="field"><label>${t("Your mobile")}</label><input name="phone" /></div>
+          <div class="field"><label>${t("Company Website")}</label><input name="website" placeholder="https://www.example.com" /></div>
+          <div class="field"><label>${t("Number Of Employment (including Volunteers)")}</label><input name="employees" type="number" min="0" /></div>
+          <div class="field"><label>${t("Annual budget / revenue (USD)")}</label><input name="budget" type="number" min="0" required /></div>
+
+          <div class="section-title">${t("Company Contact & Details")}</div>
+          <div class="field"><label>${t("Name Of Main Company Representative")}</label><input name="contact_name" /></div>
+          <div class="field"><label>${t("Phone Number Of Main Company Representative")}</label><input name="contact_mobile" /></div>
+          <div class="field"><label>${t("Email Of Main Company Representative")}</label><input name="contact_email" type="email" /></div>
+
+          <div class="section-title">${t("Social Responsibility Interests")}</div>
+          <div class="field"><label>${t("Looking To Provide CSR By (Cause)")}</label><input name="csr_cause" /></div>
+          <div class="field"><label>${t("Have You Previously Supported Any Causes As Part Of CSR?")}</label>
+            <select name="csr_supported"><option value="">${t("Select")}</option><option value="yes">${t("Yes")}</option><option value="no">${t("No")}</option></select>
+          </div>
+          <div class="field"><label>${t("How Did You Know About Socality")}</label><input name="heard_about" /></div>
+
+          <div class="section-title">${t("Access Details")}</div>
+          <div class="field"><label>${t("Your email")}</label><input name="email" type="email" required /></div>
+          <div class="field"><label>${t("Password")}</label><input name="password" type="password" required /></div>
+          <div class="field"><label>${t("Confirm password")}</label><input name="password2" type="password" required /></div>
+          <div class="field" style="grid-column:1/-1;"><label><input type="checkbox" name="terms" /> ${t("I agree to the Terms of Service and Privacy Policy")}</label></div>
+        `;
+
+        form.innerHTML = currentKind === 'ngo' ? fieldsHtmlNgo : fieldsHtmlCorp;
+        formWrap.appendChild(form);
+
+        const actions = document.createElement("div");
+        actions.style.marginTop = "16px";
+        actions.style.display = "flex";
+        actions.style.gap = "10px";
+        const btnCancel = document.createElement("button");
+        btnCancel.type = "button";
+        btnCancel.className = "btn btn-outline";
+        btnCancel.textContent = t("Cancel");
+        btnCancel.addEventListener("click", () => go("landing"));
+        const btnSubmit = document.createElement("button");
+        btnSubmit.type = "button";
+        btnSubmit.className = "btn btn-primary";
+        btnSubmit.textContent = t("Create account & continue");
+        btnSubmit.addEventListener("click", async () => {
+          const f = document.getElementById("register-form");
+          if (f.password.value !== f.password2.value){
+            showToast(state.lang==="ar"?"كلمتا المرور غير متطابقتين.":"Passwords do not match.", true);
+            return;
+          }
+          if (!f.terms.checked){
+            showToast(state.lang==="ar"?"يرجى قبول الشروط.":"Please accept the terms.", true);
+            return;
+          }
+
+          const payload = {
+            kind: currentKind,
+            email: (f.email.value || '').trim(),
+            password: f.password.value,
+            name: (f.name_en.value || '').trim(),
+            annualBudget: Number(f.budget.value || '0'),
+            extra: {
+              english_name: (f.name_en.value || '').trim(),
+              arabic_name: (f.name_ar ? f.name_ar.value : '').trim(),
+              country: (f.country ? f.country.value : '').trim(),
+              registration_number: (f.registration_number ? f.registration_number.value : '').trim(),
+              phone: (f.phone ? f.phone.value : '').trim(),
+              website: (f.website ? f.website.value : '').trim(),
+              employees: f.employees && f.employees.value !== '' ? Number(f.employees.value) : null,
+              ngo_causal_activities: f.ngo_causal_activities ? f.ngo_causal_activities.value : undefined,
+              sdg: f.sdg ? f.sdg.value : undefined,
+              area_of_assistance: f.area_of_assistance ? f.area_of_assistance.value : undefined,
+              heard_about: f.heard_about ? f.heard_about.value : undefined,
+              contact_first_name: f.contact_first_name ? f.contact_first_name.value : undefined,
+              contact_last_name: f.contact_last_name ? f.contact_last_name.value : undefined,
+              contact_mobile: f.contact_mobile ? f.contact_mobile.value : undefined,
+              contact_name: f.contact_name ? f.contact_name.value : undefined,
+              contact_email: f.contact_email ? f.contact_email.value : undefined,
+              csr_cause: f.csr_cause ? f.csr_cause.value : undefined,
+              csr_supported: f.csr_supported ? f.csr_supported.value : undefined,
+              sector: f.sector ? f.sector.value : undefined
+            }
+          };
+          if (!payload.email || !payload.password || !payload.name){
+            showToast("Please fill required fields.", true);
+            return;
+          }
+          try{
+            const data = await apiFetch("/api/register", {
+              method:"POST",
+              body: JSON.stringify(payload)
+            });
+            setAuth(data.token, data.user);
+            showToast("Account created. Let's start the survey.");
+            state.survey = { loaded:false, sectionIndex:0, answers:{} };
+            go("survey");
+          }catch(err){
+            showToast(err.error || "Registration failed.", true);
+          }
+        });
+        actions.appendChild(btnCancel);
+        actions.appendChild(btnSubmit);
+        formWrap.appendChild(actions);
+      }
+
+      renderForm();
+
+      tabNgo.addEventListener("click", () => {
+        currentKind = "ngo";
+        tabNgo.classList.add("active");
+        tabCorp.classList.remove("active");
+        renderForm();
+      });
+      tabCorp.addEventListener("click", () => {
+        currentKind = "corporate";
+        tabCorp.classList.add("active");
+        tabNgo.classList.remove("active");
+        renderForm();
+      });
+    }
+
+    function renderDashboard(root){
+      if (!state.user){
+        go("login");
+        return;
+      }
+      root.innerHTML = "";
+      const grid = document.createElement("div");
+      grid.className = "two-col";
+
+      const left = document.createElement("div");
+      left.className = "card";
+      left.innerHTML = `
+        <div class="section-title">Welcome back, ${state.user.name || state.user.email}</div>
+        <div class="section-sub">You can update your profile, launch the CSR survey, or review submissions (coming soon).</div>
+      `;
+      const meta = document.createElement("div");
+      meta.className = "stat-row";
+      meta.innerHTML = `
+        <div class="stat">
+          <strong>${state.user.org_kind || "-"}</strong>
+          <span>Organization kind</span>
+        </div>
+        <div class="stat">
+          <strong>${state.user.org_size || "-"}</strong>
+          <span>Size based on annual budget</span>
+        </div>
+        <div class="stat">
+          <strong>${state.user.org_type || "-"}</strong>
+          <span>Type used for tailoring the questionnaire</span>
+        </div>
+      `;
+      left.appendChild(meta);
+
+      const actions = document.createElement("div");
+      actions.className = "hero-cta";
+      const btnSurvey = document.createElement("button");
+      btnSurvey.className = "btn btn-primary";
+      btnSurvey.textContent = "Open CSR survey";
+      btnSurvey.addEventListener("click", () => go("survey"));
+      const btnProfile = document.createElement("button");
+      btnProfile.className = "btn btn-outline";
+      btnProfile.textContent = "Edit profile";
+      btnProfile.addEventListener("click", () => {
+        const profileCard = document.getElementById("profile-card");
+        if (profileCard) profileCard.scrollIntoView({ behavior:"smooth" });
+      });
+      actions.appendChild(btnSurvey);
+      actions.appendChild(btnProfile);
+      left.appendChild(actions);
+
+      const right = document.createElement("div");
+      right.className = "card";
+      right.id = "profile-card";
+      right.innerHTML = `
+        <div class="section-title">Profile</div>
+        <div class="section-sub">Update your display name or password.</div>
+        <form id="profile-form" class="form-grid">
+          <div class="field">
+            <label>Name</label>
+            <input name="name" value="${state.user.name || ""}" />
+          </div>
+          <div class="field">
+            <label>New password (optional)</label>
+            <input name="password" type="password" />
+          </div>
+        </form>
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" id="profile-save">Save changes</button>
+        </div>
+      `;
+      grid.appendChild(left);
+      grid.appendChild(right);
+      root.appendChild(grid);
+
+      document.getElementById("profile-save").addEventListener("click", async () => {
+        const form = document.getElementById("profile-form");
+        const payload = {
+          name: form.name.value.trim(),
+          password: form.password.value || undefined
+        };
+        try{
+          const data = await apiFetch("/api/me", {
+            method:"PUT",
+            body: JSON.stringify(payload)
+          });
+          setAuth(state.token, data.user);
+          showToast("Profile updated.");
+          render(); // refresh view
+        }catch(err){
+          showToast(err.error || "Could not update profile.", true);
+        }
+      });
+    }
+
+    async function renderSurvey(root){
+      if (!state.user){
+        go("login");
+        return;
+      }
+      root.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="section-title">"+t("CSR questionnaire")+""</div>
+        <div class="section-sub">"+t("Questions filtered")+""</div>
+      `;
+      root.appendChild(card);
+
+      try{
+        await ensureQuestionsLoaded();
+      }catch(err){
+        card.innerHTML += '<p class="muted">' + t("Failed to load questions.") + '</p>';
+        return;
+      }
+
+      const sections = userSections();
+      if (!sections.length){
+        card.innerHTML += '<p class="muted">' + t("No sections available for your organization type yet.") + '</p>';
+        return;
+      }
+
+      const totalSteps = sections.length;
+      const step = Math.min(state.survey.sectionIndex + 1, totalSteps);
+
+      const meta = document.createElement("div");
+      meta.className = "pill";
+      meta.textContent = t("Section") + " " + step + " " + t("of") + " " + totalSteps;
+      card.appendChild(meta);
+
+      const bar = document.createElement("div");
+      bar.className = "progress-bar";
+      const inner = document.createElement("div");
+      inner.style.width = Math.round(step/totalSteps*100) + "%";
+      bar.appendChild(inner);
+      card.appendChild(bar);
+
+      if (state.survey.sectionIndex >= sections.length){
+        card.innerHTML += `
+          <p style="margin-top:16px;">"+t("You reached the end")+"</p>
+        `;
+        const submitRow = document.createElement("div");
+        submitRow.style.marginTop = "12px";
+        const btnSubmit = document.createElement("button");
+        btnSubmit.className = "btn btn-primary";
+        btnSubmit.textContent = t("Submit answers");
+        btnSubmit.addEventListener("click", async () => {
+          try{
+            const payload = {
+              submittedAt: new Date().toISOString(),
+              lang: state.lang,
+              answers: state.survey.answers
+            };
+            const data = await apiFetch("/api/submit", {
+              method:"POST",
+              body: JSON.stringify(payload)
+            });
+            showToast("Responses submitted (id " + data.id + ").");
+            state.survey.sectionIndex = 0;
+            state.survey.answers = {};
+            go("dashboard");
+          }catch(err){
+            showToast(err.error || "Submit failed.", true);
+          }
+        });
+        submitRow.appendChild(btnSubmit);
+        card.appendChild(submitRow);
+        return;
+      }
+
+      const sec = sections[state.survey.sectionIndex];
+      const title = sec.title_en || "Section";
+      const subTitle = sec.title_ar ? ("<span class='muted'>" + sec.title_ar + "</span>") : "";
+      card.innerHTML += `
+        <h3 style="margin-top:14px;margin-bottom:4px;">${title}</h3>
+        ${subTitle}
+      `;
+
+      (sec.questions || []).forEach(q => {
+        const qBox = document.createElement("div");
+        qBox.className = "q-card";
+        const text = (state.lang === 'ar' ? (q.text_ar || q.text_en) : (q.text_en || q.text_ar)) || "";
+        qBox.innerHTML = '<div class="q-title">'+ text +'</div>';
+        const key = q.id;
+        const isMulti = q.type === "multiple";
+
+        if (q.choices && q.choices.length){
+          q.choices.forEach(choice => {
+            const label = document.createElement("label");
+            label.className = "opt";
+            const value = (state.lang === 'ar' ? (choice.ar || choice.en) : (choice.en || choice.ar));
+            const textChoice = (state.lang === 'ar' ? (choice.ar || choice.en) : (choice.en || choice.ar));
+            let checked = false;
+            if (isMulti){
+              const arr = Array.isArray(state.survey.answers[key]) ? state.survey.answers[key] : [];
+              checked = arr.includes(value);
+            } else {
+              checked = state.survey.answers[key] === value;
+            }
+            label.innerHTML = '<input type="'+(isMulti?'checkbox':'radio')+'" name="'+key+(isMulti?'[]':'')+'" '+(checked?'checked':'')+'> '+textChoice;
+            label.addEventListener("click", () => {
+              if (isMulti){
+                const arr = Array.isArray(state.survey.answers[key]) ? state.survey.answers[key] : [];
+                const exists = arr.includes(value);
+                state.survey.answers[key] = exists ? arr.filter(v => v !== value) : arr.concat(value);
+              } else {
+                state.survey.answers[key] = value;
+              }
+            });
+            qBox.appendChild(label);
+          });
+        } else {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = state.survey.answers[key] || "";
+          input.placeholder = "Your answer";
+          input.addEventListener("input", e => {
+            state.survey.answers[key] = e.target.value;
+          });
+          qBox.appendChild(input);
+        }
+
+        card.appendChild(qBox);
+      });
+
+      const controls = document.createElement("div");
+      controls.className = "survey-controls";
+      const left = document.createElement("div");
+      const right = document.createElement("div");
+      const back = document.createElement("button");
+      back.className = "btn btn-outline";
+      back.textContent = "Back";
+      back.disabled = state.survey.sectionIndex === 0;
+      back.addEventListener("click", () => {
+        if (state.survey.sectionIndex > 0){
+          state.survey.sectionIndex -= 1;
+          render();
+        }
+      });
+      left.appendChild(back);
+
+      const next = document.createElement("button");
+      next.className = "btn btn-primary";
+      next.textContent = state.survey.sectionIndex === sections.length-1 ? "Finish section" : "Next section";
+      next.addEventListener("click", () => {
+        state.survey.sectionIndex += 1;
+        render();
+      });
+      right.appendChild(next);
+
+      controls.appendChild(left);
+      controls.appendChild(right);
+      card.appendChild(controls);
+    }
+
+    async function renderAdmin(root){
+      if (!state.user){
+        go("login");
+        return;
+      }
+      if (state.user.role !== "admin"){
+        root.innerHTML = "<div class='card'><div class='section-title'>Forbidden</div><p class='muted'>You must be an admin to access this page.</p></div>";
+        return;
+      }
+      root.innerHTML = "";
+      const grid = document.createElement("div");
+      grid.className = "two-col";
+
+      const left = document.createElement("div");
+      left.className = "card";
+      left.innerHTML = `
+        <div class="section-title">Budget thresholds</div>
+        <div class="section-sub">Define when NGOs and corporates are considered large vs small.</div>
+        <form id="rules-form" class="form-grid">
+          <div class="field">
+            <label>NGO large threshold (USD)</label>
+            <input name="ngo_threshold" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label>Corporate large threshold (USD)</label>
+            <input name="corporate_threshold" type="number" min="0" />
+          </div>
+        </form>
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" id="rules-save">Save rules</button>
+        </div>
+      `;
+      grid.appendChild(left);
+
+      const right = document.createElement("div");
+      right.className = "card";
+      right.innerHTML = `
+        <div class="section-title">Recent responses</div>
+        <div class="section-sub">Last 200 submissions with linked organizations.</div>
+        <div id="responses-table"></div>
+      `;
+      grid.appendChild(right);
+      root.appendChild(grid);
+
+      try{
+        const { rules } = await apiFetch("/api/admin/budget-rules");
+        const form = document.getElementById("rules-form");
+        form.ngo_threshold.value = rules.ngo_threshold;
+        form.corporate_threshold.value = rules.corporate_threshold;
+      }catch(err){
+        showToast(err.error || "Failed to load rules.", true);
+      }
+
+      document.getElementById("rules-save").addEventListener("click", async () => {
+        const form = document.getElementById("rules-form");
+        try{
+          await apiFetch("/api/admin/budget-rules", {
+            method:"PUT",
+            body: JSON.stringify({
+              ngo_threshold: form.ngo_threshold.value,
+              corporate_threshold: form.corporate_threshold.value
+            })
+          });
+          showToast("Budget rules updated.");
+        }catch(err){
+          showToast(err.error || "Could not update rules.", true);
+        }
+      });
+
+      try{
+        const data = await apiFetch("/api/admin/responses");
+        const wrap = document.getElementById("responses-table");
+        if (!data.items || !data.items.length){
+          wrap.innerHTML = "<p class='muted'>No responses yet.</p>";
+          return;
+        }
+        const table = document.createElement("table");
+        table.className = "table";
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Submitted at</th>
+              <th>User</th>
+              <th>Org type</th>
+              <th>Lang</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        `;
+        const tbody = table.querySelector("tbody");
+        data.items.forEach(r => {
+          const tr = document.createElement("tr");
+          const userLabel = (r.email || "-") + " (" + (r.org_kind || "-") + "/" + (r.org_size || "-") + ")";
+          tr.innerHTML = `
+            <td>${r.id}</td>
+            <td>${r.submitted_at}</td>
+            <td>${userLabel}</td>
+            <td>${r.organization_type}</td>
+            <td>${r.lang}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        wrap.innerHTML = "";
+        wrap.appendChild(table);
+      }catch(err){
+        showToast(err.error || "Failed to load responses.", true);
+      }
+    }
+
+    function render(){
+      renderNav();
+      const app = document.getElementById("app");
+      if (!app) return;
+      if (state.route === "landing"){
+        renderLanding(app);
+      } else if (state.route === "login"){
+        renderLogin(app);
+      } else if (state.route === "register"){
+        renderRegister(app);
+      } else if (state.route === "dashboard"){
+        renderDashboard(app);
+      } else if (state.route === "survey"){
+        renderSurvey(app);
+      } else if (state.route === "admin"){
+        renderAdmin(app);
+      } else {
+        renderLanding(app);
+      }
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+    restoreAuth();
+    window.addEventListener("hashchange", syncRouteFromHash);
+    syncRouteFromHash();
+  </script>
+  <script>
+  const translations = {
+    en: {
+      title: "CSR Assessment Portal",
+      assessTitle: "Structured CSR self-assessment",
+      assessSub: "A guided, bilingual questionnaire to evaluate NGOs and corporates across governance, impact, innovation and more.",
+      getStarted: "Get started (register)",
+      alreadyAccount: "I already have an account",
+      multiSection: "Multi-section",
+      dynamic: "Dynamic",
+      readyScoring: "Ready for scoring",
+      howItWorks: "How it works",
+      step1: "Register your organization (NGO or corporate) and provide basic profile details.",
+      step2: "Our rules classify you as small or large based on annual budget thresholds.",
+      step3: "Complete the tailored CSR questionnaire, per section, in your preferred language.",
+      step4: "Review submissions in your dashboard; admins can configure thresholds and view all responses.",
+      pauseResume: "You can pause and resume at any time once logged in."
+    },
+    ar: {
+      title: "بوابة تقييم المسؤولية الاجتماعية",
+      assessTitle: "تقييم المسؤولية الاجتماعية المنظم",
+      assessSub: "استبيان ثنائي اللغة لتقييم المنظمات غير الحكومية والشركات عبر الحوكمة، التأثير، الابتكار والمزيد.",
+      getStarted: "ابدأ الآن (تسجيل)",
+      alreadyAccount: "لدي حساب بالفعل",
+      multiSection: "متعدد الأقسام",
+      dynamic: "ديناميكي",
+      readyScoring: "جاهز للتقييم",
+      howItWorks: "كيف يعمل",
+      step1: "سجل منظمتك (غير حكومية أو شركة) وقدم تفاصيل الملف الشخصي الأساسية.",
+      step2: "تصنفك قواعدنا كصغير أو كبير بناءً على ميزانية سنوية.",
+      step3: "أكمل استبيان المسؤولية الاجتماعية المصمم حسب القسم باللغة المفضلة لديك.",
+      step4: "راجع الإرسالات في لوحة التحكم الخاصة بك؛ يمكن للمسؤولين ضبط الحدود وعرض جميع الردود.",
+      pauseResume: "يمكنك التوقف والاستئناف في أي وقت بمجرد تسجيل الدخول."
+    }
+  };
+
+  function translatePage() {
+    const lang = document.documentElement.getAttribute("lang") || "en";
+    const t = translations[lang];
+
+    document.title = t.title;
+    document.querySelector(".hero-title").textContent = t.assessTitle;
+    document.querySelector(".hero-sub").textContent = t.assessSub;
+    document.querySelector(".hero-cta .btn-primary").textContent = t.getStarted;
+    document.querySelector(".hero-cta .btn-outline").textContent = t.alreadyAccount;
+    document.querySelector(".tag:nth-child(1)").textContent = t.multiSection;
+    document.querySelector(".tag:nth-child(2)").textContent = t.dynamic;
+    document.querySelector(".tag:nth-child(3)").textContent = t.readyScoring;
+    document.querySelector(".section-title").textContent = t.howItWorks;
+    const steps = document.querySelectorAll(".section-sub li");
+    steps[0].textContent = t.step1;
+    steps[1].textContent = t.step2;
+    steps[2].textContent = t.step3;
+    steps[3].textContent = t.step4;
+    document.querySelector(".muted").textContent = t.pauseResume;
+  }
+
+  document.addEventListener("DOMContentLoaded", translatePage);
+</script>
+</body>
+</html>
+
